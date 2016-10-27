@@ -54,33 +54,23 @@ for date in date_list
   end
 end
 
-#Sort maps based on size and pass to array
-max_fan_arr = fan_map.max_by { |k, v| v }
-max_crush_arr = crush_map.max_by { |k, v| v }
-
 puts "#{poster_un}: #{count}"
 puts "\n\\----------------------------------------------------\n"
 puts "#{fan_map.keys.length} fans in #{fan_count} comments"
 
-i = 0
-while i < 5 do
-  un = fan_map.max_by { |k, v| v }[0]
-  if fan_map[un] > 0
-    puts "\n#{un.ljust(25)} : #{fan_map[un]}"
-    fan_map[un] = 0
-  end
-  i += 1
+max_fan_arr = fan_map.sort_by { |k, v| v }
+max_fan_arr.reverse!
+
+for i in 0..4
+  puts "\n#{max_fan_arr[i][0].ljust(25)}: #{max_fan_arr[i][1]}"
 end
 
 puts "\n\\----------------------------------------------------\n"
-puts "#{crush_map.keys.length} crushes in #{crush_count} comments"
-i = 0
-while i < 5 do
-  un = crush_map.max_by { |k, v| v }[0]
-  if crush_map[un] > 0
-    puts "\n#{un.ljust(25)} : #{crush_map[un]}"
-    crush_map[un] = 0
-  end
-  i += 1
-end
+puts "#{crush_map.keys.length} fans in #{crush_count} comments"
 
+max_crush_arr = crush_map.sort_by { |k, v| v }
+max_crush_arr.reverse!
+
+for i in 0..4
+  puts "\n#{max_crush_arr[i][0].ljust(25)}: #{max_crush_arr[i][1]}"
+end
