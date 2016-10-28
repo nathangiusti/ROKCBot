@@ -1,6 +1,5 @@
 require 'date'
 
-poster_un = ARGV[2]
 start_date = Date.parse(ARGV[0])
 end_date = Date.parse(ARGV[1])
 ARCHIVE_DIR = "archive"
@@ -32,6 +31,14 @@ end
 poster_arr = post_map.sort_by { |k, v| v }
 poster_arr.reverse!
 
-for k,v in poster_arr
-  puts "#{k},#{v}"
+if ARGV.length > 2
+  output = File.open(ARGV[2], 'w')
+  cut_off = ARGV[3].to_i
+  for i in 0..cut_off
+    output.write("#{poster_arr[i][0]}\n")
+  end
+else
+  for k,v in poster_arr
+    puts "#{k},#{v}"
+  end
 end
