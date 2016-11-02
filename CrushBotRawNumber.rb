@@ -16,10 +16,12 @@ def is_not_filtered?(val)
 end
 
 options = OpenStruct.new
+ARGV << '-h' if ARGV.empty?
 
 OptionParser.new do |opts|
 
-  opts.banner = "Usage: example.rb [options]"
+  opts.banner = "Usage: CrushBotRawNumber.rb [options]"
+
 
   opts.on("--start_date start_date") do |v|
     options.start_date = v

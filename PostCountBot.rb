@@ -1,7 +1,36 @@
 require 'date'
+require 'optparse'
+require 'ostruct'
 
-start_date = Date.parse(ARGV[0])
-end_date = Date.parse(ARGV[1])
+options = OpenStruct.new
+ARGV << '-h' if ARGV.empty?
+
+OptionParser.new do |opts|
+
+  opts.banner = "Usage: CrushBotRawNumber.rb [options]"
+
+
+  opts.on("--start_date start_date") do |v|
+    options.start_date = v
+  end
+
+  opts.on("--end_date end_date") do |v|
+    options.end_date = v
+  end
+
+  opts.on("-f file", "--file file") do |v|
+    options.file = v
+  end
+
+  opts.on("-l limit", "--limit limit") do |v|
+    options.limit = v
+  end
+
+end.parse!
+
+start_date = Date.parse(options.start_date)
+end_date = Date.parse(options.end_date)
+
 ARCHIVE_DIR = "archive"
 
 #Generate a list of dates
@@ -31,14 +60,22 @@ end
 poster_arr = post_map.sort_by { |k, v| v }
 poster_arr.reverse!
 
-if ARGV.length > 2
-  output = File.open(ARGV[2], 'w')
-  cut_off = ARGV[3].to_i
-  for i in 0..cut_off
-    output.write("#{poster_arr[i][0]}\n")
-  end
+if options.limit.nil?
+  cutoff = poster_arr.length
 else
-  for k,v in poster_arr
-    puts "#{k},#{v}"
-  end
+  cutoff = options.limit.to_i
 end
+
+output_string = ""
+
+for i in 0..cutoff
+  output_string << "#{poster_arr[i][0]}\n"
+end
+
+if !options.file.nil? 
+  output = File.open(options.file, 'w')
+  output.write(output_string)
+else
+  puts output_string
+end
+
