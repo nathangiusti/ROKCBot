@@ -2,6 +2,7 @@ import praw
 import datetime
 import sys
 import time
+import os
 
 def generateStuff(comment, author):
   comment_file.write(comment.author.name)
@@ -12,20 +13,24 @@ def generateStuff(comment, author):
       reply_file.write("\n")
       generateStuff(reply, reply.author.name)
 
-
-if len(sys.argv) < 3:
-  print "Usage [start_date] [end_date] ex 20161010 20161017"
-  sys.exit(1)
-
 DATE_FORMAT = "%Y%m%d"
 ARCHIVE_DIR = "archive"
-user_agent = ("OkCupid Crush 1.0")
+user_agent = "OkCupid Crush 1.0"
+
 r = praw.Reddit(user_agent = user_agent)
+
 subreddit = r.get_subreddit("OkCupid")
 
+if len(sys.argv) < 3:
+  dirs = os.listdir( ARCHIVE_DIR )
+  sorted(dirs)
+  start_date = datetime.datetime.strptime(dirs[-1].split('_')[1][:-4], DATE_FORMAT).date() + datetime.timedelta(days=1)
+  end_date = datetime.date.fromordinal(datetime.date.today().toordinal()-1)
+  print("Processing from %s to %s" % (start_date.strftime(DATE_FORMAT), end_date.strftime(DATE_FORMAT)))
+else:
+  start_date = datetime.datetime.strptime(sys.argv[1], DATE_FORMAT).date()
+  end_date = datetime.datetime.strptime(sys.argv[2], DATE_FORMAT).date()
 
-start_date = datetime.datetime.strptime(sys.argv[1], DATE_FORMAT).date()
-end_date = datetime.datetime.strptime(sys.argv[2], DATE_FORMAT).date()
 curr_date = end_date
 comment_file = open("%s/Comment_%s.txt" % (ARCHIVE_DIR, curr_date.strftime(DATE_FORMAT)), 'w')
 reply_file = open("%s/Reply_%s.txt" % (ARCHIVE_DIR, curr_date.strftime(DATE_FORMAT)), 'w')
@@ -44,12 +49,10 @@ for submission in subreddit.get_new(limit = 1000):
 
   #If we are looking at data after the end date, we need to go back further
   if sub_date > end_date:
-    print("Submission too new skipping: %s" % sub_date.strftime(DATE_FORMAT))
     continue
 
   #If we are looking at a new date, create a new file
   if sub_date != curr_date:
-    print("Submission is a new day: %s" % sub_date.strftime(DATE_FORMAT))
     curr_date = sub_date
     comment_file.close()
     reply_file.close()
