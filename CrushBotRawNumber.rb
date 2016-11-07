@@ -121,7 +121,7 @@ max_crush_arr.reverse!
 
 
 puts "#{options.user_name}: #{comment_count}"
-puts "\n\\----------------------------------------------------\n"
+puts "\n\\----------------------------------------------------\n\n"
 puts "#{fan_map.keys.length} fans in #{fan_comment_count} comments"
 
 
@@ -130,7 +130,7 @@ for i in 0..4
   puts "\n#{max_fan_arr[i][0].ljust(25)}: #{max_fan_arr[i][1]}"
 end
 
-puts "\n\\----------------------------------------------------\n"
+puts "\n\\----------------------------------------------------\n\n"
 puts "#{crush_map.keys.length} crushes in #{crush_comment_count} comments"
 
 
