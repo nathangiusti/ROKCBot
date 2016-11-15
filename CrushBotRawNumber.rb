@@ -39,10 +39,6 @@ OptionParser.new do |opts|
     options.user_name = v
   end
 
-  opts.on("-n", "--normalize") do |v|
-    options.normalize = true
-  end
-
 end.parse!
 
 unless options.start_date.nil? || options.end_date.nil?
@@ -61,11 +57,17 @@ for next_date in (start_date..end_date)
   date_list << "#{next_date.strftime('%Y%m%d')}"
 end
 
+normalized = false
+
 unless options.filter_list.nil?
   @@filter_array = []
   filter_file = File.open(options.filter_list)
   filter_file.each do |line|
     @@filter_array.push(line.strip)
+  end
+
+  if @@filter_array.include?(options.user_name)
+    normalized = true
   end
 end
 
@@ -130,23 +132,35 @@ crush_map.each do |key, value|
   end
 end
 
-if options.normalize
+normalize_fan_map = {}
+normalize_crush_map = {}
+
+if normalized
+
   fan_map.each do |key, value|
-    fan_map[key] = fan_map[key]/bulk_fan_map[key]
+    normalize_fan_map[key] = fan_map[key]/bulk_fan_map[key] * 1000
   end
   crush_map.each do |key, value|
-    crush_map[key] = crush_map[key]/bulk_crush_map[key]
+    normalize_crush_map[key] = crush_map[key]/bulk_crush_map[key] * 1000
   end
+
+  normalize_max_fan_arr = normalize_fan_map.sort_by { |k, v| v }
+  normalize_max_fan_arr.reverse!
+  normalize_max_crush_arr = normalize_crush_map.sort_by { |k, v| v }
+  normalize_max_crush_arr.reverse!
 end
 
-max_fan_arr = fan_map.sort_by { |k, v| v }
-max_fan_arr.reverse!
-max_crush_arr = crush_map.sort_by { |k, v| v }
-max_crush_arr.reverse!
+
 max_stalkee_arr = stalkee_map.sort_by { |k, v| v }
 max_stalkee_arr.reverse!
 max_stalker_arr = stalker_map.sort_by { |k, v| v }
 max_stalker_arr.reverse!
+max_stalker_arr = stalker_map.sort_by { |k, v| v }
+max_stalker_arr.reverse!
+max_fan_arr = fan_map.sort_by { |k, v| v }
+max_fan_arr.reverse!
+max_crush_arr = crush_map.sort_by { |k, v| v }
+max_crush_arr.reverse!
 
 
 
@@ -156,31 +170,62 @@ puts "#{options.user_name}: #{comment_count}"
 puts "\n\\----------------------------------------------------\n\n"
 puts "#{fan_map.keys.length} fans in #{fan_comment_count} comments"
 
-
-
-for i in 0..4
-  puts "\n#{max_fan_arr[i][0].ljust(25)}: #{max_fan_arr[i][1]}"
+begin
+  max_fan_arr[0..4].each do |obj|
+    puts "\n#{obj[0].ljust(25)}: #{obj[1].round(0)}"
+  end
+rescue Exception
 end
 
 puts "\n\\----------------------------------------------------\n\n"
 puts "#{crush_map.keys.length} crushes in #{crush_comment_count} comments"
-
-
-
-for i in 0..4
-  puts "\n#{max_crush_arr[i][0].ljust(25)}: #{max_crush_arr[i][1]}"
+begin
+  max_crush_arr[0..4].each do |obj|
+    puts "\n#{obj[0].ljust(25)}: #{obj[1].round(0)}"
+  end
+rescue Exception
 end
 
 puts "\n\\----------------------------------------------------\n\n"
 puts "Stalks #{stalkee_map.keys.length}"
 
-for i in 0..4
-  puts "\n#{max_stalkee_arr[i][0].ljust(25)}: #{max_stalkee_arr[i][1]}"
+begin
+  max_stalkee_arr[0..4].each do |obj|
+    puts "\n#{obj[0].ljust(25)}: #{obj[1].round(0)}"
+  end
+rescue Exception
 end
 
 puts "\n\\----------------------------------------------------\n\n"
 puts "Stalked by #{stalker_map.keys.length}"
 
-for i in 0..4
-  puts "\n#{max_stalker_arr[i][0].ljust(25)}: #{max_stalker_arr[i][1]}"
+begin
+  max_stalker_arr[0..4].each do |obj|
+    puts "\n#{obj[0].ljust(25)}: #{obj[1].round(0)}"
+  end
+rescue Exception
 end
+
+if normalized
+  puts "\n\\----------------------------------------------------\n\n"
+  puts "Your true fans"
+
+  begin
+    normalize_max_fan_arr[0..4].each do |obj|
+      puts "\n#{obj[0].ljust(25)}: #{obj[1].round(0)}%"
+    end
+  rescue Exception
+  end
+
+  puts "\n\\----------------------------------------------------\n\n"
+  puts "Your true crushes"
+
+  begin
+    normalize_max_crush_arr[0..4].each do |obj|
+      puts "\n#{obj[0].ljust(25)}: #{obj[1].round(0)}%"
+    end
+  rescue Exception
+  end
+end
+
+puts "\n\n"
