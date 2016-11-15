@@ -45,17 +45,21 @@ OptionParser.new do |opts|
 
 end.parse!
 
-start_date = Date.parse(options.start_date)
-end_date = Date.parse(options.end_date)
+unless options.start_date.nil? || options.end_date.nil?
+  start_date = Date.parse(options.start_date)
+  end_date = Date.parse(options.end_date)
+else
+  start_date = Date.parse("20161010")
+  end_date = Date.parse(Time.now.to_s)
+end
+
 @@filter_array = nil
 ARCHIVE_DIR = "archive"
-
 #Generate a list of dates
 date_list = []
 for next_date in (start_date..end_date)
   date_list << "#{next_date.strftime('%Y%m%d')}"
 end
-
 
 unless options.filter_list.nil?
   @@filter_array = []
@@ -74,8 +78,13 @@ crush_map = {}
 fan_map = {}
 
 for date in date_list
-  reply_csv = CSV.open("#{ARCHIVE_DIR}/Reply_#{date}.txt")
-  comment_csv = File.open("#{ARCHIVE_DIR}/Comment_#{date}.txt")
+  begin
+    reply_csv = CSV.open("#{ARCHIVE_DIR}/Reply_#{date}.txt")
+    comment_csv = File.open("#{ARCHIVE_DIR}/Comment_#{date}.txt")
+  rescue Exception
+    break
+  end
+
 
   #Get number of comments by user
   comment_csv.each do |line|
@@ -103,6 +112,24 @@ for date in date_list
   end
 end
 
+stalker_map = {}
+fan_map.each do |key, value|
+  if crush_map.key?(key)
+    stalker_map[key] = fan_map[key] - crush_map[key]
+  else
+    stalker_map[key] = fan_map[key]
+  end
+end
+
+stalkee_map = {}
+crush_map.each do |key, value|
+  if fan_map.key?(key)
+    stalkee_map[key] = crush_map[key] - fan_map[key]
+  else
+    stalkee_map[key] = crush_map[key]
+  end
+end
+
 if options.normalize
   fan_map.each do |key, value|
     fan_map[key] = fan_map[key]/bulk_fan_map[key]
@@ -111,10 +138,15 @@ if options.normalize
     crush_map[key] = crush_map[key]/bulk_crush_map[key]
   end
 end
+
 max_fan_arr = fan_map.sort_by { |k, v| v }
 max_fan_arr.reverse!
 max_crush_arr = crush_map.sort_by { |k, v| v }
 max_crush_arr.reverse!
+max_stalkee_arr = stalkee_map.sort_by { |k, v| v }
+max_stalkee_arr.reverse!
+max_stalker_arr = stalker_map.sort_by { |k, v| v }
+max_stalker_arr.reverse!
 
 
 
@@ -137,4 +169,18 @@ puts "#{crush_map.keys.length} crushes in #{crush_comment_count} comments"
 
 for i in 0..4
   puts "\n#{max_crush_arr[i][0].ljust(25)}: #{max_crush_arr[i][1]}"
+end
+
+puts "\n\\----------------------------------------------------\n\n"
+puts "Stalks #{stalkee_map.keys.length}"
+
+for i in 0..4
+  puts "\n#{max_stalkee_arr[i][0].ljust(25)}: #{max_stalkee_arr[i][1]}"
+end
+
+puts "\n\\----------------------------------------------------\n\n"
+puts "Stalked by #{stalker_map.keys.length}"
+
+for i in 0..4
+  puts "\n#{max_stalker_arr[i][0].ljust(25)}: #{max_stalker_arr[i][1]}"
 end

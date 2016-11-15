@@ -28,8 +28,13 @@ OptionParser.new do |opts|
 
 end.parse!
 
-start_date = Date.parse(options.start_date)
-end_date = Date.parse(options.end_date)
+unless options.start_date.nil? || options.end_date.nil?
+  start_date = Date.parse(options.start_date)
+  end_date = Date.parse(options.end_date)
+else
+  start_date = Date.parse("20161010")
+  end_date = Date.parse(Time.now.to_s)
+end
 
 ARCHIVE_DIR = "archive"
 
@@ -42,7 +47,12 @@ end
 post_map = {}
 
 for date in date_list
-  comment_csv = File.open("#{ARCHIVE_DIR}/Comment_#{date}.txt")
+
+  begin
+    comment_csv = File.open("#{ARCHIVE_DIR}/Comment_#{date}.txt")
+  rescue Exception
+    break
+  end
 
   count = 0
   comment_csv.each do |line|
@@ -72,7 +82,7 @@ for i in 0..cutoff
   output_string << "#{poster_arr[i][0]}\n"
 end
 
-if !options.file.nil? 
+if !options.file.nil?
   output = File.open(options.file, 'w')
   output.write(output_string)
 else
