@@ -13,3 +13,11 @@ def map_to_sorted_arr(map)
   arr = map.sort_by { |k, v| v }
   arr.reverse!
 end
+
+def extract_from_arr(arr)
+  return_arr = []
+  arr.each do |k,v|
+    return_arr << k
+  end
+  return_arr
+end
