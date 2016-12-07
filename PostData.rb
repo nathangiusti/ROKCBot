@@ -8,7 +8,9 @@ class PostData
   attr_accessor :reply_arr
 
 
-  def initialize(folder, start_date=nil, end_date=nil)
+  def initialize(folder, cj_filter=nil, start_date=nil, end_date=nil)
+    @filter_array = cj_filter
+
     unless start_date.nil? || end_date.nil?
       start_date = Date.parse(options.start_date)
       end_date = Date.parse(options.end_date)
@@ -16,8 +18,6 @@ class PostData
       start_date = Date.parse("20161010")
       end_date = Date.parse(Time.now.to_s)
     end
-
-    @filter_array = nil
 
     @comment_arr = []
     @reply_arr = []
@@ -39,19 +39,27 @@ class PostData
 
       temp_arr = []
       comment_csv.each do |row|
-        temp_arr << row
+        if is_not_filtered?(row)
+          temp_arr << row
+        end
       end
       @comment_arr << temp_arr
 
 
       temp_arr = []
       reply_csv.each do |row|
-        temp_arr << [row[0],row[1]]
+        if is_not_filtered?(row[0]) && is_not_filtered?(row[1])
+          temp_arr << [row[0],row[1]]
+        end
       end
       @reply_arr << temp_arr
 
       i -= 1
     end
+  end
+
+  def is_not_filtered?(val)
+    return (@filter_array.nil? || @filter_array.include?(val))
   end
 end
 

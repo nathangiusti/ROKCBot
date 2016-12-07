@@ -68,9 +68,39 @@ class PostCount
 
   def get_user_info_string(username)
     info = get_user_info_map(username)
-    "#{username}\n\n
-    Comment Count: #{info[:count_number].round(0)} (Rank #{info[:count_rank]})\n\n
-    CJ Score: #{info[:score_number].round(0)} (Rank #{info[:score_rank]})\n\n"
+    ret_str = "#{username}\n\n"
+    ret_str << "Comment Count: #{info[:count_number].round(0)} (Rank #{info[:count_rank]})\n\n"
+    ret_str << "CJ Score: #{info[:score_number].round(0)} (Rank #{info[:score_rank]})\n\n"
+    ret_str
+  end
+
+  def get_simple_user_info_string(username)
+    info = get_user_info_map(username)
+    "#{info[:score_rank]}\t #{username.ljust(25)}: #{info[:score_number].round(0)}"
+  end
+
+  def does_user_exist(username)
+    @post_count_map.key?(username)
+  end
+
+  def get_total_number_comments
+    sum = 0
+    post_count_map.each do |key,val|
+      sum += val
+    end
+    sum
+  end
+
+  def get_total_number_users
+    post_count_arr.length
+  end
+
+  def get_total_score(limit=-1)
+    sum = 0
+    map_to_sorted_arr(post_score_map)[0..limit].each do |val|
+      sum += val[1]
+    end
+    sum
   end
 end
 

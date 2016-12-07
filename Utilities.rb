@@ -1,4 +1,6 @@
-HALF_LIFE = 21.0
+require 'clipboard'
+
+HALF_LIFE = 7.0
 
 #To increment by 1, just pass 0 for age. 1/2^(0/HALF_LIFE) == 1/2^0 == 1/1 == 1
 def increment_map(map, key, age)
@@ -21,3 +23,23 @@ def extract_from_arr(arr)
   end
   return_arr
 end
+
+def copy_to_clipboard(str)
+  Clipboard.copy str
+end
+
+def find_max_rating(cj_filter, pd)
+  max_val = 0
+  i = 0
+  cj_filter.each do |user_name|
+    print "#{i}%\r"
+    t_crushes = TrueCrushes.new(pd, user_name)
+    max_val = t_crushes.top_rating > max_val ? t_crushes.top_rating : max_val
+    i += 1
+  end
+  puts "Max Val: #{max_val}"
+  max_val
+end
+
+
+
