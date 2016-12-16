@@ -4,13 +4,21 @@ require_relative 'Utilities.rb'
 class TrueCrushes
 
   def initialize(post_data, user_name, max_rating=100)
+    @user_name = user_name
 
+    #Stores the total number of times a user was replied to
     @fan_comment_count = 0
+
+    #Stores the total number of times a user replied to someone
     @crush_comment_count = 0
 
-    comment_count = 0
+    #Stores the total number of times each user replied to someone
     bulk_fan_map = {};
+
+    #Stores the total number of times each user was replied to
     bulk_crush_map = {};
+
+
     crush_map = {}
     fan_map = {}
 
@@ -19,10 +27,11 @@ class TrueCrushes
       arr.each do |row|
         increment_map(bulk_fan_map, row[1], i)
         increment_map(bulk_crush_map, row[0], i)
-        if row[0] == user_name
+
+        if row[0] == @user_name
           increment_map(fan_map, row[1], i)
           @fan_comment_count += 1
-        elsif row[1] == user_name
+        elsif row[1] == @user_name
           increment_map(crush_map, row[0], i)
           @crush_comment_count += 1
         end
@@ -37,11 +46,11 @@ class TrueCrushes
     normalize_crush_map = {}
 
     fan_map.each do |key, value|
-      normalize_fan_map[key] = (fan_map[key]/bulk_fan_map[key])/max_rating * 10000
+      normalize_fan_map[key] = (value/bulk_fan_map[key])/max_rating * 10000
     end
 
     crush_map.each do |key, value|
-      normalize_crush_map[key] = (crush_map[key]/bulk_crush_map[key])/max_rating * 10000
+      normalize_crush_map[key] = (value/bulk_crush_map[key])/max_rating * 10000
     end
 
     @normalize_max_fan_arr = map_to_sorted_arr(normalize_fan_map)
@@ -72,6 +81,10 @@ class TrueCrushes
 
   def top_rating
     @normalize_max_fan_arr[0][1] > @normalize_max_crush_arr[0][1] ? @normalize_max_fan_arr[0][1] : @normalize_max_crush_arr[0][1]
+  end
+
+  def top_rating_string
+    @normalize_max_fan_arr[0][1] > @normalize_max_crush_arr[0][1] ? "#{@normalize_max_fan_arr[0][0]} loves #{@user_name}" : "#{@user_name} loves #{@normalize_max_crush_arr[0][0]}"
   end
 
 end

@@ -1,6 +1,6 @@
 require 'clipboard'
 
-HALF_LIFE = 7.0
+HALF_LIFE = 14.0
 
 #To increment by 1, just pass 0 for age. 1/2^(0/HALF_LIFE) == 1/2^0 == 1/1 == 1
 def increment_map(map, key, age)
@@ -31,13 +31,18 @@ end
 def find_max_rating(cj_filter, pd)
   max_val = 0
   i = 0
+  str = ""
   cj_filter.each do |user_name|
     print "#{i}%\r"
     t_crushes = TrueCrushes.new(pd, user_name)
-    max_val = t_crushes.top_rating > max_val ? t_crushes.top_rating : max_val
+    if t_crushes.top_rating > max_val
+      max_val =  t_crushes.top_rating
+      str = t_crushes.top_rating_string
+    end
     i += 1
   end
-  puts "Max Val: #{max_val}"
+  puts "Max Val: #{max_val}\n"
+  puts str
   max_val
 end
 
