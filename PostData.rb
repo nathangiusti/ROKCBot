@@ -48,6 +48,11 @@ class PostData
 
       temp_arr = []
       reply_csv.each do |row|
+
+        #Get rid of users replying to themselves
+        if row[0] == row[1]
+          next
+        end
         if is_not_filtered?(row[0]) && is_not_filtered?(row[1])
           temp_arr << [row[0],row[1]]
         end

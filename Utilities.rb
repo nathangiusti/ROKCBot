@@ -30,6 +30,7 @@ end
 
 def find_max_rating(cj_filter, pd)
   max_val = 0
+  crush_val_arr = []
   i = 0
   str = ""
   cj_filter.each do |user_name|
@@ -39,12 +40,34 @@ def find_max_rating(cj_filter, pd)
       max_val =  t_crushes.top_rating
       str = t_crushes.top_rating_string
     end
+    t_crushes.normalize_max_fan_arr[0..4].each do |val|
+      crush_val_arr << val[1]
+    end
+    t_crushes.normalize_max_crush_arr[0..4].each do |val|
+      crush_val_arr << val[1]
+    end
     i += 1
   end
   puts "Max Val: #{max_val}\n"
   puts str
-  max_val
+  crush_val_arr.each do |val|
+    val = val/max_val * 10000
+  end
+  crush_val_arr.sort!
 end
+
+def get_percentile(num, val_arr)
+  i = 0
+  val_arr.each do |val|
+    i += 1
+    if num < val
+      return i/val_arr.length
+    end
+  end
+  -1
+end
+
+
 
 
 

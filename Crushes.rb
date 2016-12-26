@@ -33,14 +33,14 @@ class Crushes
     stalker_map = {}
     fan_map.each do |key, value|
       if crush_map.key?(key) && fan_map[key] > crush_map[key]
-        stalker_map[key] = fan_map[key] - crush_map[key]
+        stalker_map[key] = fan_map[key] - crush_map[key] if fan_map[key] - crush_map[key]
       end
     end
 
     stalkee_map = {}
     crush_map.each do |key, value|
       if fan_map.key?(key) && crush_map[key] > fan_map[key]
-        stalkee_map[key] = crush_map[key] - fan_map[key]
+        stalkee_map[key] = crush_map[key] - fan_map[key] if crush_map[key] - fan_map[key] > 1
       end
     end
 

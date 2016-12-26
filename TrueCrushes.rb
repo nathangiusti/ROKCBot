@@ -3,6 +3,9 @@ require_relative 'Utilities.rb'
 
 class TrueCrushes
 
+  attr_accessor :normalize_max_fan_arr
+  attr_accessor :normalize_max_crush_arr
+
   def initialize(post_data, user_name, max_rating=100)
     @user_name = user_name
 
@@ -74,6 +77,7 @@ class TrueCrushes
       limit = array.length
     end
     array[0..limit].each do |obj|
+      #get_percentile
       ret_str << "\n#{obj[0].ljust(25)}: #{obj[1].round(1)}\n"
     end
     ret_str
