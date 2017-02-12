@@ -22,6 +22,7 @@ puts "\n\n"
 puts "There were #{pc.get_total_number_comments.round(0)} comments from #{pc.get_total_number_users} different user names"
 puts "The top 10 commenters are #{(pc.get_total_score(10)/pc.get_total_score*100).round(0)}% of the sub"
 puts "The top 100 commenters are #{(pc.get_total_score(100)/pc.get_total_score*100).round(0)}% of the sub"
+puts "To be in the top 100 requires a CJ score of #{pc.get_user_score_number(cj_filter[-1]).round(0)}"
 puts "\n\n"
 
 cj_filter[0..9].each do |un|
