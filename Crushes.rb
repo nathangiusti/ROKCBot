@@ -3,6 +3,8 @@ require_relative 'Utilities.rb'
 
 class Crushes
 
+  attr_reader :max_crush_arr
+
   def initialize(post_data, user_name)
 
     @fan_comment_count = 0

@@ -3,16 +3,16 @@ require_relative 'PostCount.rb'
 require_relative 'Crushes.rb'
 require_relative 'TrueCrushes.rb'
 require_relative 'Utilities.rb'
-require_relative 'SexMap.rb'
+#require_relative 'SexMap.rb'
 
 puts "Building sexmap"
-sm = SexMap.new("cj_sex_list.txt")
+#sm = SexMap.new("cj_sex_list.txt")
 puts "Building database"
-pd = PostData.new("archive")
+pd = PostData.new("heroku")
 pc = PostCount.new(pd)
 puts "Filtering database"
 cj_filter = pc.get_filter(100)
-pd_filter = PostData.new("archive", cj_filter)
+pd_filter = PostData.new("heroku", cj_filter)
 puts "Calibraiting ratings"
 crush_val_array = find_max_rating(cj_filter, pd_filter)
 max_rating = crush_val_array[crush_val_array.length - 1]

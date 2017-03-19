@@ -15,7 +15,7 @@ class PostData
       start_date = Date.parse(options.start_date)
       end_date = Date.parse(options.end_date)
     else
-      start_date = Date.parse("20161010")
+      start_date = Date.parse("20170221")
       end_date = Date.parse(Time.now.to_s)
     end
 
