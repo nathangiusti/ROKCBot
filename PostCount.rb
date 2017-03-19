@@ -25,6 +25,13 @@ class PostCount
       i -= 1
     end
 
+    post_data.reply_arr.each do |arr|
+      arr.each do |row|
+        increment_map(@post_score_map, row[0], i)
+      end
+      i -= 1
+    end
+
     @post_score_arr = extract_from_arr(map_to_sorted_arr(post_score_map))
     @post_count_arr = extract_from_arr(map_to_sorted_arr(post_count_map))
   end
